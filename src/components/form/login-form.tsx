@@ -3,23 +3,60 @@
 import { useForm } from "@tanstack/react-form";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
-import { Field, FieldError, FieldGroup, FieldLabel } from "../ui/field";
+import {
+  Field,
+  FieldError,
+  FieldGroup,
+  FieldLabel,
+  FieldSeparator,
+} from "../ui/field";
 import { LoginSchema } from "@/validation";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
+import { useGoogleOAuth, useLogin } from "@/hooks";
+import { useRouter } from "next/navigation";
+import { toast } from "../ui/toast";
+import { Spinner } from "../ui/spinner";
+import { GoogleLogin } from "@react-oauth/google";
+import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
+  const router = useRouter();
+
+  const { mutate: login, isPending: loginPending } = useLogin();
+
   const form = useForm({
     defaultValues: {
-      email: "",
-      password: "",
+      email: "superadmin@example.com",
+      password: "Super@admin28388",
     },
     validators: {
       onSubmit: LoginSchema,
     },
     onSubmit: ({ value }) => {
-      console.log(value);
+      const loginData = {
+        email: value.email,
+        password: value.password,
+      };
+      login(loginData, {
+        onSuccess: (res) => {
+          toast.add({
+            title: "Login Successful",
+            description: "Welcome back! You have successfully logged in.",
+            type: "success",
+          });
+          router.push("/");
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Authorization Error",
+            description:
+              err.message || "Something went wrong,  please try again later.",
+            type: "error",
+          });
+        },
+      });
     },
   });
 
@@ -100,9 +137,13 @@ export default function LoginForm() {
               );
             }}
           </form.Field>
-          <Button type="submit">Submit</Button>
+          <Button disabled={loginPending} type="submit">
+            {loginPending ? <Spinner /> : "Submit"}
+          </Button>
         </FieldGroup>
       </form>
+      <FieldSeparator>Or Continue with</FieldSeparator>
+      <GoogleLoginComponent />
     </div>
   );
 }

@@ -23,6 +23,11 @@
     "enabled": true,
     "rules": {
       "recommended": true,
+      "a11y": {
+        "noSvgWithoutTitle": "off",
+        "noLabelWithoutControl": "info",
+        "useValidAriaRole": "info"
+      },
       "complexity": { "noUselessUndefinedInitialization": "warn" }
     },
     "domains": {
