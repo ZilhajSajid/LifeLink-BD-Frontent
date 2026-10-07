@@ -1,5 +1,10 @@
 "use client";
 
+import { useSearchParams } from "next/navigation";
+
 export default function VerifyAccountForm() {
-  return <div>verify-account-form</div>;
+  const searchParams = useSearchParams();
+  const email = searchParams.get("email");
+
+  return <div>{email}</div>;
 }

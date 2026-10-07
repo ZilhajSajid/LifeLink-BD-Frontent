@@ -19,6 +19,7 @@ import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 import { GoogleLogin } from "@react-oauth/google";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
+import Link from "next/link";
 
 export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -144,6 +145,15 @@ export default function LoginForm() {
       </form>
       <FieldSeparator>Or Continue with</FieldSeparator>
       <GoogleLoginComponent />
+      <div>
+        Do not have an account?
+        <Link
+          href="/register"
+          className="font-medium underline underline-offset-4 hover:text-primary"
+        >
+          Register
+        </Link>
+      </div>
     </div>
   );
 }
