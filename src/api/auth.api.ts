@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import { GooglePayload, LoginPayload } from "@/types";
+import { GooglePayload, LoginPayload, RegisterPayload } from "@/types";
 
 export function userLogin(payload: LoginPayload) {
   return apiClient("/auth/login", { method: "POST", body: payload });
@@ -13,4 +13,8 @@ export function getMe() {
 
 export function googleOAuth(payload: GooglePayload) {
   return apiClient("/auth/google", { method: "POST", body: payload });
+}
+
+export function userRegistration(payload: RegisterPayload) {
+  return apiClient("/auth/register", { method: "POST", body: payload });
 }

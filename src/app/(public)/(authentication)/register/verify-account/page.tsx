@@ -1,5 +1,5 @@
 import Logo from "@/assets/svg/Logo";
-import RegisterForm from "@/components/form/register-form";
+import VerifyAccountForm from "@/components/form/verify-account-form";
 import Link from "next/link";
 
 export default function LoginPage() {
@@ -17,7 +17,7 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <RegisterForm />
+            <VerifyAccountForm />
           </div>
         </div>
       </div>

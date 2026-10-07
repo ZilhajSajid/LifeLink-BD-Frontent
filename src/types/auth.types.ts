@@ -6,3 +6,10 @@ export interface LoginPayload {
 export interface GooglePayload {
   idToken: string;
 }
+
+export interface RegisterPayload {
+  name: string;
+  email: string;
+  password: string;
+  requester: { contactNumber?: string };
+}

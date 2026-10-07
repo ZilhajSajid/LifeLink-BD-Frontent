@@ -15,24 +15,72 @@ import { Button } from "../ui/button";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import Link from "next/link";
 import { RegistrationSchema } from "@/validation";
+import z from "zod";
+import { useRegister } from "@/hooks";
+import { toast } from "../ui/toast";
+import { useRouter } from "next/navigation";
+import { Spinner } from "../ui/spinner";
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const router = useRouter();
+
+  type RequesterDefaultValues = z.infer<typeof RegistrationSchema>;
+  const defaultValues: RequesterDefaultValues = {
+    name: "",
+    email: "",
+    contactNumber: "",
+    password: "",
+    confirmPassword: "",
+  };
+
+  const { mutate: register, isPending: registerPending } = useRegister();
 
   const form = useForm({
-    defaultValues: {
-      name: "",
-      email: "",
-      contactNumber: "",
-      password: "",
-      confirmPassword: "",
-    },
+    defaultValues,
     validators: {
       onSubmit: RegistrationSchema,
     },
     onSubmit: async ({ value }) => {
-      console.log(value);
+      const registrationData = {
+        name: value.name,
+        email: value.email,
+        password: value.password,
+        requester: {
+          contactNumber: value.contactNumber,
+        },
+      };
+
+      register(registrationData, {
+        onSuccess: (res) => {
+          if (!res.success) {
+            toast.add({
+              title: "Server failure",
+              description: "Something went wrong,  please try again later.",
+              type: "error",
+            });
+          }
+
+          toast.add({
+            title: "Registration Successful",
+            description: "Please verify your account.",
+            type: "success",
+          });
+
+          const params = new URLSearchParams({ email: registrationData.email });
+
+          router.push(`/register/verify-account?${params.toString()}`);
+        },
+        onError: (err) => {
+          toast.add({
+            title: "Authorization Error",
+            description:
+              err.message || "Something went wrong,  please try again later.",
+            type: "error",
+          });
+        },
+      });
     },
   });
 
@@ -200,7 +248,9 @@ export default function RegisterForm() {
               );
             }}
           </form.Field>
-          <Button type="submit">Submit</Button>
+          <Button disabled={registerPending} type="submit">
+            {registerPending ? <Spinner /> : "Register"}
+          </Button>
         </FieldGroup>
       </form>
       <FieldSeparator>Or Continue with</FieldSeparator>
