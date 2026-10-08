@@ -28,7 +28,8 @@
         "noLabelWithoutControl": "info",
         "useValidAriaRole": "info"
       },
-      "complexity": { "noUselessUndefinedInitialization": "warn" }
+      "complexity": { "noUselessUndefinedInitialization": "warn" },
+      "correctness": { "useExhaustiveDependencies": "info" }
     },
     "domains": {
       "next": "recommended",

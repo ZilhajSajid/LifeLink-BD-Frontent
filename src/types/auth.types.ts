@@ -13,3 +13,7 @@ export interface RegisterPayload {
   password: string;
   requester: { contactNumber?: string };
 }
+export interface VerifyAccountPayload {
+  email: string;
+  otp: string;
+}
