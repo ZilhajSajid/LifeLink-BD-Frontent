@@ -1,5 +1,5 @@
 import apiClient from "@/lib/apiClient";
-import { DonorApplicationPayload } from "@/types";
+import { DonorApplicationPayload, VerifyAccountPayload } from "@/types";
 
 export function applyAsDonor(payload: DonorApplicationPayload) {
   const formData = new FormData();
@@ -14,5 +14,11 @@ export function applyAsDonor(payload: DonorApplicationPayload) {
   return apiClient("/donors/apply-as-donor", {
     method: "POST",
     body: formData,
+  });
+}
+export function verifyDonorAccount(payload: VerifyAccountPayload) {
+  return apiClient("/donors/apply-as-donor/verify-email", {
+    method: "POST",
+    body: payload,
   });
 }

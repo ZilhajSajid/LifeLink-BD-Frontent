@@ -14,16 +14,25 @@ import { InputOTP, InputOTPGroup, InputOTPSlot } from "../ui/input-otp";
 import { Field, FieldError, FieldLabel } from "../ui/field";
 import { useEffect, useState } from "react";
 import { REGEXP_ONLY_DIGITS } from "input-otp";
-import { useVerifyAccount } from "@/hooks";
+import { useVerifyAccount, useVerifyDonor } from "@/hooks";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
 
-export default function VerifyAccountForm() {
+export default function VerifyAccountForm({
+  mode = "requester",
+}: {
+  mode: "donor" | "requester";
+}) {
   const [otp, setOtp] = useState("");
   const [isInvalid, setIsInvalid] = useState(false);
   const router = useRouter();
 
-  const { mutate: verify, isPending: verifyPending } = useVerifyAccount();
+  const { mutate: verifyRequester, isPending: verifyPending } =
+    useVerifyAccount();
+  const { mutate: verifyDonor, isPending: verifyDonorPending } =
+    useVerifyDonor();
+  const verify = mode === "donor" ? verifyDonor : verifyRequester;
+  const isVerifying = mode === "donor" ? verifyDonorPending : verifyPending;
 
   const searchParams = useSearchParams();
   const email = searchParams.get("email") || "";
@@ -52,13 +61,21 @@ export default function VerifyAccountForm() {
             type: "error",
           });
         }
-
+        if (mode === "donor") {
+          toast.add({
+            title: "Verification Successful!",
+            description: "Welcome onboard!",
+            type: "success",
+          });
+          router.push("/");
+          return;
+        }
         toast.add({
           title: "Verification Successful!",
-          description: "Welcome onboard!",
+          description:
+            "An admin will review your application. Please allow us some time to process it, and check your email within the next few days for an update.",
           type: "success",
         });
-
         router.push("/");
       },
       onError: (err) => {
@@ -126,8 +143,8 @@ export default function VerifyAccountForm() {
         </form>
       </CardContent>
       <CardFooter>
-        <Button disabled={verifyPending} type="submit" form="otp-form">
-          {verifyPending ? <Spinner /> : "Submit"}
+        <Button disabled={isVerifying} type="submit" form="otp-form">
+          {isVerifying ? <Spinner /> : "Submit"}
         </Button>
       </CardFooter>
     </Card>

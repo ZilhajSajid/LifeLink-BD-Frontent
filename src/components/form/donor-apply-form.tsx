@@ -16,6 +16,7 @@ import {
   SelectValue,
 } from "../ui/select";
 import {
+  donorApplicationSchema,
   isAcceptedFileSize,
   isAcceptedFileType,
   MAX_ADDITIONAL_FILES,
@@ -25,6 +26,7 @@ import { formatFileSize } from "@/utils";
 import { DonorApplicationData } from "@/types";
 import { useApplyAsDonor } from "@/hooks";
 import { Spinner } from "../ui/spinner";
+import { toast } from "../ui/toast";
 
 export default function DonorApplyForm() {
   const router = useRouter();
@@ -32,17 +34,18 @@ export default function DonorApplyForm() {
 
   const form = useForm({
     defaultValues: {
-      name: "frontend donor",
-      email: "frontend@donor.com",
-      phone: "01675728388",
+      name: "",
+      email: "",
+      phone: "",
       bloodGroup: "",
       dateOfBirth: "",
       gender: "",
-      address: "Moulvibazar",
-      city: "Sylhet",
+      address: "",
+      city: "",
       certificate: null as File | null,
       additionalFiles: [] as File[],
     },
+    validators: { onSubmit: donorApplicationSchema },
     onSubmit: async ({ value }) => {
       const donorData: DonorApplicationData = {
         user: {
@@ -57,15 +60,39 @@ export default function DonorApplyForm() {
           city: value.city.trim(),
         },
       };
+
       apply(
         {
           data: donorData,
           certificate: value.certificate as File,
           additionalFiles: value.additionalFiles,
         },
+
         {
           onSuccess: (res) => {
-            console.log(res);
+            if (!res.success) {
+              toast.add({
+                title: "Server failure",
+                description: "Something went wrong. Please try again",
+                type: "error",
+              });
+              return;
+            }
+            toast.add({
+              title: "Application submitted",
+              description: "Please verify your account",
+              type: "success",
+            });
+            const params = new URLSearchParams({ email: donorData.user.email });
+            router.push(`/apply/verify-account?${params.toString()}`);
+          },
+          onError: (err) => {
+            toast.add({
+              title: "Application failure",
+              description:
+                err.message || "Something went wrong. Please try again",
+              type: "error",
+            });
           },
         },
       );
@@ -234,7 +261,7 @@ export default function DonorApplyForm() {
                   { label: "Other", value: "OTHER" },
                 ];
                 return (
-                  <Field>
+                  <Field data-invalid={isInvalid}>
                     <FieldLabel>Gender</FieldLabel>
                     <Select
                       items={items}
@@ -258,6 +285,9 @@ export default function DonorApplyForm() {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
                   </Field>
                 );
               }}
@@ -277,7 +307,7 @@ export default function DonorApplyForm() {
                   { label: "O-", value: "O_NEGATIVE" },
                 ];
                 return (
-                  <Field>
+                  <Field data-invalid={isInvalid}>
                     <FieldLabel>Blood Group</FieldLabel>
                     <Select
                       items={items}
@@ -301,6 +331,9 @@ export default function DonorApplyForm() {
                         </SelectGroup>
                       </SelectContent>
                     </Select>
+                    {isInvalid && (
+                      <FieldError errors={field.state.meta.errors} />
+                    )}
                   </Field>
                 );
               }}
@@ -358,14 +391,6 @@ export default function DonorApplyForm() {
                       onChange={(e) => {
                         const selected = e.target.files?.[0] ?? null;
 
-                        if (
-                          selected &&
-                          (!isAcceptedFileSize(selected?.size) ||
-                            !isAcceptedFileType(selected?.type))
-                        ) {
-                          field.handleBlur();
-                          return;
-                        }
                         field.handleChange(selected);
                         e.target.value = "";
                       }}
@@ -409,7 +434,12 @@ export default function DonorApplyForm() {
               const files = field.state.value;
               return (
                 <Field data-invalid={isInvalid}>
-                  <FieldLabel htmlFor={field.name}>Additional Files</FieldLabel>
+                  <FieldLabel htmlFor={field.name}>
+                    Additional Files
+                    <span className="font-normal text-muted-foreground">
+                      (optional)
+                    </span>
+                  </FieldLabel>
                   <div>
                     <Button
                       render={<label htmlFor="additional-file-field" />}
@@ -432,18 +462,9 @@ export default function DonorApplyForm() {
                         if (incoming.length === 0) {
                           return;
                         }
-                        const invalid = incoming.some(
-                          (file) =>
-                            !isAcceptedFileSize(file.size) ||
-                            !isAcceptedFileType(file.type),
-                        );
-                        if (invalid) {
-                          field.handleBlur();
-                          e.target.value = "";
-                          return;
-                        }
 
                         field.handleChange([...files, ...incoming]);
+                        e.target.value = "";
                       }}
                     />
                     {files.length > 0 && (

@@ -3,7 +3,7 @@ import VerifyAccountForm from "@/components/form/verify-account-form";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export default function RequesterVerifyAccountPage() {
+export default function DonorAccountVerifyPage() {
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -19,7 +19,7 @@ export default function RequesterVerifyAccountPage() {
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
             <Suspense fallback={<p>Loading...</p>}>
-              <VerifyAccountForm mode="requester" />
+              <VerifyAccountForm mode="donor" />
             </Suspense>
           </div>
         </div>
