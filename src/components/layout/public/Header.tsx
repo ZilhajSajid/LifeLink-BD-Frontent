@@ -49,7 +49,7 @@ export default function Header() {
   };
 
   return (
-    <header className="w-full h-16 border border-b">
+    <header className="sticky top-0 z-50 w-full h-16 border-b bg-background">
       <div className="flex justify-between items-center h-full max-w-7xl mx-auto">
         <div className="flex items-center gap-2">
           <Logo />

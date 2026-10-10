@@ -5,8 +5,8 @@ export const requesterRoutes = [
     title: "My Requests",
     items: [
       {
-        title: "Overview",
-        url: `${prefix}`,
+        title: "Request Blood",
+        url: `${prefix}/create-request`,
       },
       {
         title: "My Payments",
