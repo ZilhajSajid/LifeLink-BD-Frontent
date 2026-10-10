@@ -10,7 +10,7 @@ export const donorRoutes = [
       },
       {
         title: "Make Donation",
-        url: `${prefix}`,
+        url: `${prefix}/donations`,
       },
     ],
   },
