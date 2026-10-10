@@ -13,11 +13,10 @@ import {
 import { LoginSchema } from "@/validation";
 import { useState } from "react";
 import { Eye, EyeClosed } from "lucide-react";
-import { useGoogleOAuth, useLogin } from "@/hooks";
+import { useLogin } from "@/hooks";
 import { useRouter } from "next/navigation";
 import { toast } from "../ui/toast";
 import { Spinner } from "../ui/spinner";
-import { GoogleLogin } from "@react-oauth/google";
 import GoogleLoginComponent from "../modules/google-login/GoogleLogin";
 import Link from "next/link";
 
@@ -29,8 +28,8 @@ export default function LoginForm() {
 
   const form = useForm({
     defaultValues: {
-      email: "superadmin@example.com",
-      password: "Super@admin28388",
+      email: "bohish@gmail.com",
+      password: "q!tXh!5?G6",
     },
     validators: {
       onSubmit: LoginSchema,

@@ -6,7 +6,7 @@ export const donorRoutes = [
     items: [
       {
         title: "Overview",
-        url: `${prefix}}`,
+        url: `${prefix}`,
       },
       {
         title: "Make Donation",

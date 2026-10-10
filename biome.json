@@ -29,7 +29,8 @@
         "useValidAriaRole": "info"
       },
       "complexity": { "noUselessUndefinedInitialization": "warn" },
-      "correctness": { "useExhaustiveDependencies": "info" }
+      "correctness": { "useExhaustiveDependencies": "info" },
+      "suspicious": { "noArrayIndexKey": "info" }
     },
     "domains": {
       "next": "recommended",
